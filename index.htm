@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+MicProject
+</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js" /> </script>
+
+<!-- CSS goes in the document HEAD or added to your external stylesheet -->
+<style type="text/css">
+table.imagetable {
+  font-family: verdana,arial,sans-serif;
+  font-size:11px;
+  color:#333333;
+  border-width: 1px;
+  border-color: #999999;
+  border-collapse: collapse;
+}
+table.imagetable th {
+  
+  border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #999999;
+}
+table.imagetable td {
+ 
+  border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #999999;
+}
+
+table.imagetable thead{
+   border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #999999;
+  background-color: #26BBED;
+}
+
+#loadMore{
+  height:20px; 
+    width:100px; 
+    background-color: #26BBED;
+    display: block; 
+    margin: 0 auto;
+}
+</style>
+
+
+</head>
+<body>
+
+<div class="wrapper">
+<div class="profile">
+   <table id= "userdata" border="2" class="imagetable">
+  <thead>
+            <th>UNPUBLISHED ARTICLES</th>
+            <th>AUTHOR</th>
+            <th>WORDS</th>
+            <th>SUBMITTED</th>
+        </thead>
+      <tbody>
+
+       </tbody>
+   </table>
+
+</div>
+</div>
+
+<input type="button" value="Load More" id="loadMore" data-id="10"/>
+</body>
+
+
+  <script>
+
+ 
+    
+
+$(function() {
+
+
+
+   /*$("#userdata").tablesorter({
+        headers: {
+            0: { sorter: false },
+            4: { sorter: false }
+        }
+    });*/
+
+
+   $.getJSON('articles.json', function(data) {
+       $.each(data.slice(0,10), function(i, f) {
+        
+
+          var tblRow = "<tr>" + "<td>" + "<img src='" + f.image + "' width='40' height='40' </img>" +  f.title + "</td>" +
+           "<td>" + f.profile.first_name + " " + f.profile.last_name + "</td>" + "<td>" + f.words + "</td>" + "<td>" + f.publish_at + "</td>" + "</tr>"
+           $(tblRow).appendTo("#userdata tbody");
+     });
+
+   });
+
+    $('#loadMore').on('click', function(){
+       $.getJSON('articles.json', function(data) {
+       var rowCount = $('#userdata >tbody >tr').length;
+       var n,m;
+       if(rowCount >= 10 && rowCount < 20){
+          n = 10;
+          m = n + 10;
+
+          $.each(data.slice(n,m), function(i, f) {
+          var tblRow = "<tr>" + "<td>" + "<img src='" + f.image + "' width='40' height='40' </img>" +  f.title + "</td>" +
+           "<td>" + f.profile.first_name + " " + f.profile.last_name + "</td>" + "<td>" + f.words + "</td>" + "<td>" + f.publish_at + "</td>" + "</tr>"
+           $(tblRow).appendTo("#userdata tbody");
+     });
+
+       }
+       else if(rowCount >= 30 && rowCount <= 40){
+
+         var xmlhttp = new XMLHttpRequest();
+var url = "more-articles.json";
+
+xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        var myArr = JSON.parse(xmlhttp.responseText);
+        myFunction(myArr);
+    }
+};
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+
+function myFunction(arr) {
+    var out = "";
+    var i;
+    for(i = 0; i < arr.length; i++) {
+        out += "<tr>" + "<td>" + "<img src='" + arr[i].image + "' width='40' height='40' </img>" +  arr[i].title + "</td>" +
+           "<td>" + arr[i].profile.first_name + " " + arr[i].profile.last_name + "</td>" + "<td>" + arr[i].words + "</td>" + "<td>" + arr[i].publish_at + "</td>" + "</tr>"
+    }
+    $(out).appendTo("#userdata tbody");
+}
+
+
+       }
+       else if(rowCount >= 20 && rowCount <= 30) {
+        n = 20;
+        m = n + 10;
+
+        $.each(data.slice(n,m), function(i, f) {
+          var tblRow = "<tr>" + "<td>" + "<img src='" + f.image + "' width='40' height='40' </img>" +  f.title + "</td>" +
+           "<td>" + f.profile.first_name + " " + f.profile.last_name + "</td>" + "<td>" + f.words + "</td>" + "<td>" + f.publish_at + "</td>" + "</tr>"
+           $(tblRow).appendTo("#userdata tbody");
+     });
+       }
+       
+
+   });
+    });
+
+  $('table').tablesorter();
+
+}); 
+
+   
+
+   </script>
+</html>
